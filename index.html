@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Would You Like to Go on a Date?</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
@@ -16,7 +16,7 @@
         body {
             overflow: hidden;
             color: white;
-            background-color: #8C1D40; /* Deep maroon background - a color often used in Nepali textiles */
+            background-color: #FF94CC; /* Softer pink background */
         }
         
         #canvas {
@@ -24,6 +24,7 @@
             top: 0;
             left: 0;
             z-index: -1;
+            touch-action: none; /* Better touch handling for iOS */
         }
         
         .container {
@@ -45,7 +46,7 @@
             width: 100%;
             height: 100%;
             border: 20px solid transparent;
-            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFC72C' d='M0,0 L100,0 L100,100 L0,100 L0,0 Z M10,10 L10,90 L90,90 L90,10 L10,10 Z'/%3E%3Cpath fill='%23FFC72C' d='M20,20 L80,20 L80,80 L20,80 L20,20 Z M30,30 L30,70 L70,70 L70,30 L30,30 Z'/%3E%3C/svg%3E") 30 stretch;
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFB6C1' d='M0,0 L100,0 L100,100 L0,100 L0,0 Z M10,10 L10,90 L90,90 L90,10 L10,10 Z'/%3E%3Cpath fill='%23FFB6C1' d='M20,20 L80,20 L80,80 L20,80 L20,20 Z M30,30 L30,70 L70,70 L70,30 L30,30 Z'/%3E%3C/svg%3E") 30 stretch;
             pointer-events: none;
             z-index: 10;
         }
@@ -55,10 +56,11 @@
             padding: 30px;
             margin-bottom: 2rem;
             border-radius: 15px;
-            background: rgba(170, 56, 30, 0.85); /* Rust red background - common in Nepali art */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 2px solid #FFC72C; /* Gold border - often used in Nepali designs */
+            background: rgba(255, 134, 154, 0.85); /* Softer pink background */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 2px solid #FF94B2; /* Lighter pink border */
             max-width: 800px;
+            backdrop-filter: blur(5px); /* Add blur effect for depth */
         }
         
         .question-container::before {
@@ -68,7 +70,7 @@
             left: -10px;
             right: -10px;
             bottom: -10px;
-            border: 2px solid #FFC72C;
+            border: 2px solid #FFC8DD; /* Very light pink */
             border-radius: 20px;
             z-index: -1;
         }
@@ -77,7 +79,7 @@
             position: absolute;
             width: 80px;
             height: 80px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23FFC72C' stroke-width='2' fill='none'/%3E%3Ccircle cx='50' cy='50' r='35' stroke='%23FFC72C' stroke-width='2' fill='none'/%3E%3Ccircle cx='50' cy='50' r='25' stroke='%23FFC72C' stroke-width='2' fill='none'/%3E%3Cpath d='M50,5 L50,95 M5,50 L95,50 M14.6,14.6 L85.4,85.4 M14.6,85.4 L85.4,14.6' stroke='%23FFC72C' stroke-width='1'/%3E%3C/svg%3E");
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23FFCAD4' stroke-width='2' fill='none'/%3E%3Ccircle cx='50' cy='50' r='35' stroke='%23FFCAD4' stroke-width='2' fill='none'/%3E%3Ccircle cx='50' cy='50' r='25' stroke='%23FFCAD4' stroke-width='2' fill='none'/%3E%3Cpath d='M50,5 L50,95 M5,50 L95,50 M14.6,14.6 L85.4,85.4 M14.6,85.4 L85.4,14.6' stroke='%23FFCAD4' stroke-width='1'/%3E%3C/svg%3E");
             background-size: contain;
             z-index: 5;
             opacity: 0.8;
@@ -108,7 +110,7 @@
             color: #fff;
             font-family: 'Arial', cursive;
             line-height: 1.4;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             position: relative;
             z-index: 2;
         }
@@ -126,11 +128,11 @@
             padding: 15px 50px;
             font-size: 1.5rem;
             border: none;
-            border-radius: 10px;
+            border-radius: 50px; /* More rounded for cute effect */
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
             z-index: 1;
@@ -143,8 +145,8 @@
             left: -5px;
             right: -5px;
             bottom: -5px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L20,0 L20,20 L0,20 Z' fill='none' stroke='%23FFC72C' stroke-width='1'/%3E%3Cpath d='M5,5 L15,5 L15,15 L5,15 Z' fill='none' stroke='%23FFC72C' stroke-width='0.5'/%3E%3C/svg%3E");
-            border-radius: 15px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L20,0 L20,20 L0,20 Z' fill='none' stroke='%23FFCAD4' stroke-width='1'/%3E%3Cpath d='M5,5 L15,5 L15,15 L5,15 Z' fill='none' stroke='%23FFCAD4' stroke-width='0.5'/%3E%3C/svg%3E");
+            border-radius: 55px;
             z-index: -1;
             opacity: 0;
             transition: opacity 0.3s;
@@ -152,7 +154,7 @@
         
         .btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
         }
         
         .btn:hover::before {
@@ -160,15 +162,15 @@
         }
         
         .btn-yes {
-            background-color: #C92433; /* Nepali flag red */
+            background-color: #FF5C8D; /* Softer pink */
             color: white;
-            border: 2px solid #FFC72C;
+            border: 2px solid #FFC8DD;
         }
         
         .btn-no {
-            background-color: #2874A6; /* Deep blue, often seen in Nepali art */
+            background-color: #85C1E9; /* Softer blue */
             color: white;
-            border: 2px solid #FFC72C;
+            border: 2px solid #D4F1F9;
         }
         
         .response {
@@ -177,12 +179,13 @@
             opacity: 0;
             transition: opacity 0.5s, transform 0.5s;
             padding: 20px 30px;
-            border-radius: 15px;
+            border-radius: 25px; /* More rounded corners */
             transform: translateY(20px);
             max-width: 600px;
-            background-color: rgba(0, 0, 0, 0.6);
-            border: 2px solid #FFC72C;
+            background-color: rgba(255, 182, 193, 0.8); /* Light pink background */
+            border: 2px solid #FFCAD4;
             position: relative;
+            color: #643843; /* Darker text for contrast */
         }
         
         .response::before {
@@ -192,8 +195,8 @@
             left: -5px;
             right: -5px;
             bottom: -5px;
-            border: 1px solid #FFC72C;
-            border-radius: 18px;
+            border: 1px solid #FFCAD4;
+            border-radius: 28px;
             z-index: -1;
         }
         
@@ -211,7 +214,7 @@
             position: absolute;
             width: 20px;
             height: 20px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23C92433' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat center center;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FF5C8D' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat center center;
             background-size: contain;
             animation: float 10s linear infinite;
             opacity: 0.8;
@@ -228,24 +231,46 @@
             }
         }
         
-        /* Flower petals - inspired by Nepali designs */
+        /* Flower petals - inspired by designs but made cuter */
         .flower {
             position: absolute;
             width: 40px;
             height: 40px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFC72C' d='M50,0 C55,25 75,25 100,50 C75,75 55,75 50,100 C45,75 25,75 0,50 C25,25 45,25 50,0 Z'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23C92433'/%3E%3C/svg%3E") no-repeat center center;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFCAD4' d='M50,0 C55,25 75,25 100,50 C75,75 55,75 50,100 C45,75 25,75 0,50 C25,25 45,25 50,0 Z'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23FF94B2'/%3E%3C/svg%3E") no-repeat center center;
             background-size: contain;
             animation: floatFlower 15s linear infinite;
-            opacity: 0.4;
+            opacity: 0.6;
         }
         
         @keyframes floatFlower {
             0% {
                 transform: translateY(1000px) rotate(0deg);
-                opacity: 0.4;
+                opacity: 0.6;
             }
             100% {
                 transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Add cute little stars for more decoration */
+        .star {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 51 48'%3E%3Cpath fill='%23FFF9C4' d='M25.5,1.7l6.5,13.2c0.3,0.6,0.9,1,1.5,1.1l14.6,2.1c1.7,0.2,2.3,2.3,1.1,3.5l-10.6,10.3c-0.5,0.5-0.7,1.2-0.6,1.8l2.5,14.5c0.3,1.6-1.4,2.9-2.9,2.1l-13-6.8c-0.6-0.3-1.3-0.3-1.9,0l-13,6.8c-1.5,0.8-3.2-0.5-2.9-2.1l2.5-14.5c0.1-0.7-0.1-1.4-0.6-1.8L-1.7,21.6c-1.2-1.2-0.5-3.3,1.1-3.5l14.6-2.1c0.7-0.1,1.2-0.5,1.5-1.1L19,1.7C19.8,0.2,24.7,0.2,25.5,1.7z'/%3E%3C/svg%3E") no-repeat center center;
+            background-size: contain;
+            animation: floatStar 12s linear infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes floatStar {
+            0% {
+                transform: translateY(1000px) rotate(0deg) scale(0.5);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(180deg) scale(1.2);
                 opacity: 0;
             }
         }
@@ -325,24 +350,29 @@
     </div>
 
     <script>
-        // Set up Three.js scene
+        // Set up Three.js scene with better iOS performance
         const canvas = document.getElementById('canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        // Detect if it's running on iOS for performance optimization
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
         const renderer = new THREE.WebGLRenderer({
             canvas: canvas,
-            antialias: true,
-            alpha: true
+            antialias: !isIOS, // Disable antialiasing on iOS for better performance
+            alpha: true,
+            powerPreference: "high-performance"
         });
         
+        // Optimize renderer settings
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setClearColor(0x8C1D40, 0.3); // Nepali maroon with transparency
+        renderer.setPixelRatio(isIOS ? 1 : window.devicePixelRatio); // Lower pixel ratio for iOS
+        renderer.setClearColor(0xFF94CC, 0.3); // Soft pink with transparency
         
-        // Create particles representing stars in the night sky
+        // Create particles representing stars - reduce count on iOS
+        const particlesCount = isIOS ? 1500 : 3000;
         const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 3000;
-        
         const posArray = new Float32Array(particlesCount * 3);
         
         for(let i = 0; i < particlesCount * 3; i++) {
@@ -352,8 +382,8 @@
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         
         const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.03,
-            color: 0xFFC72C, // Nepali gold for particles
+            size: isIOS ? 0.05 : 0.03, // Larger size on iOS for visibility
+            color: 0xFFCAD4, // Soft pink for particles
             transparent: true,
             opacity: 0.8
         });
@@ -361,16 +391,17 @@
         const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(particlesMesh);
         
-        // Add Mandala geometry - a symbol often found in Nepali art
-        const mandalaGeometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
+        // Add cute geometric shape - simpler for iOS
+        const geometryDetail = isIOS ? 64 : 100;
+        const mandalaGeometry = new THREE.TorusKnotGeometry(1, 0.3, geometryDetail, 16);
         const mandalaMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0xFFC72C,
+            color: 0xFFB6C1, // Light pink
             wireframe: true
         });
         const mandala = new THREE.Mesh(mandalaGeometry, mandalaMaterial);
         scene.add(mandala);
         
-        // Add heart shape as center piece
+        // Add heart shape as center piece - optimized
         const heartShape = new THREE.Shape();
         
         // Create heart path
@@ -381,16 +412,18 @@
         heartShape.bezierCurveTo(x, y - 0.8, x + 0.5, y - 0.5, x + 0.5, y - 0.25);
         heartShape.bezierCurveTo(x + 0.5, y, x, y + 0.25, x, y + 0.25);
         
-        const heartGeometry = new THREE.ExtrudeGeometry(heartShape, {
+        // Optimize geometry for iOS
+        const extrudeSettings = {
             depth: 0.2,
             bevelEnabled: true,
-            bevelSegments: 2,
-            steps: 2,
+            bevelSegments: isIOS ? 1 : 2,
+            steps: isIOS ? 1 : 2,
             bevelSize: 0.1,
             bevelThickness: 0.1
-        });
+        };
         
-        const heartMaterial = new THREE.MeshBasicMaterial({ color: 0xC92433 }); // Nepali red
+        const heartGeometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+        const heartMaterial = new THREE.MeshBasicMaterial({ color: 0xFF5C8D }); // Cute pink
         const heart = new THREE.Mesh(heartGeometry, heartMaterial);
         heart.scale.set(0.8, 0.8, 0.8);
         heart.position.set(0, 0, -1);
@@ -399,44 +432,66 @@
         // Position camera
         camera.position.z = 5;
         
-        // Handle window resize
+        // Handle window resize with throttling for iOS
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+            // Throttle resize events
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            }, 100);
         });
         
-        // Animation loop
-        function animate() {
+        // Animation loop with adaptive frame rate
+        let lastTime = 0;
+        function animate(currentTime) {
             requestAnimationFrame(animate);
             
-            particlesMesh.rotation.x += 0.0003;
-            particlesMesh.rotation.y += 0.0003;
+            // Calculate delta time for smooth animation regardless of frame rate
+            const deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
             
-            mandala.rotation.x += 0.003;
-            mandala.rotation.y += 0.005;
+            // Use smaller rotation values on iOS for performance
+            const rotationFactor = isIOS ? 0.5 : 1;
             
-            heart.rotation.y += 0.01;
-            heart.rotation.z += 0.005;
+            particlesMesh.rotation.x += 0.0003 * rotationFactor;
+            particlesMesh.rotation.y += 0.0003 * rotationFactor;
             
-            // Make the heart pulse
+            mandala.rotation.x += 0.003 * rotationFactor;
+            mandala.rotation.y += 0.005 * rotationFactor;
+            
+            heart.rotation.y += 0.01 * rotationFactor;
+            heart.rotation.z += 0.005 * rotationFactor;
+            
+            // Make the heart pulse - optimized for iOS
             const pulseFactor = Math.sin(Date.now() * 0.003) * 0.1 + 1;
             heart.scale.set(0.8 * pulseFactor, 0.8 * pulseFactor, 0.8 * pulseFactor);
             
             renderer.render(scene, camera);
         }
         
-        animate();
+        animate(0);
         
-        // Create floating hearts and flowers background (inspired by Nepali designs)
+        // Create floating hearts, stars and flowers background
         const heartsContainer = document.getElementById('hearts');
         
-        for (let i = 0; i < 20; i++) {
+        // Fewer elements on iOS for better performance
+        const heartCount = isIOS ? 10 : 20;
+        const flowerCount = isIOS ? 8 : 15;
+        const starCount = isIOS ? 6 : 12;
+        
+        for (let i = 0; i < heartCount; i++) {
             createHeart();
         }
         
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < flowerCount; i++) {
             createFlower();
+        }
+        
+        for (let i = 0; i < starCount; i++) {
+            createStar();
         }
         
         function createHeart() {
@@ -495,29 +550,84 @@
             heartsContainer.appendChild(flower);
         }
         
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // Random size
+            const size = Math.random() * 20 + 10;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            
+            // Random position
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + Math.random() * 500;
+            star.style.left = `${startX}px`;
+            star.style.top = `${startY}px`;
+            
+            // Random animation duration
+            const duration = Math.random() * 18 + 8;
+            star.style.animation = `floatStar ${duration}s linear infinite`;
+            
+            // Random animation delay
+            star.style.animationDelay = `-${Math.random() * duration}s`;
+            
+            // Random opacity
+            star.style.opacity = Math.random() * 0.6 + 0.3;
+            
+            heartsContainer.appendChild(star);
+        }
+        
         // Handle button clicks
         document.getElementById('yes-btn').addEventListener('click', function() {
             const response = document.getElementById('response');
-            response.textContent = "That truly makes me happy ❤️";
+            response.textContent = "That truly makes me happy! 💕✨";
             response.style.opacity = 1;
             response.style.transform = "translateY(0)";
-            response.style.color = "white";
             response.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.2)";
             
-            // Create celebration hearts and flowers
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => createHeart(), i * 100);
-            }
+            // Create celebration hearts, flowers and stars with a staggered approach for better performance
+            const createElements = () => {
+                // Limit the number of elements created at once
+                const burstSize = isIOS ? 3 : 5;
+                
+                for (let i = 0; i < burstSize; i++) {
+                    setTimeout(() => createHeart(), i * 100);
+                }
+                
+                for (let i = 0; i < burstSize; i++) {
+                    setTimeout(() => createFlower(), i * 150);
+                }
+                
+                for (let i = 0; i < burstSize; i++) {
+                    setTimeout(() => createStar(), i * 130);
+                }
+            };
             
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => createFlower(), i * 150);
-            }
+            // Create elements in three bursts
+            createElements();
+            setTimeout(createElements, 700);
+            setTimeout(createElements, 1400);
         });
         
         // Make the No button impossible to click by moving it away from the cursor
         const noBtn = document.getElementById('no-btn');
         
-        noBtn.addEventListener('mouseover', function(e) {
+        // For iOS, use touchstart event as well
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        if (isTouchDevice) {
+            noBtn.addEventListener('touchstart', moveButton, { passive: true });
+        } else {
+            noBtn.addEventListener('mouseover', moveButton);
+        }
+        
+        function moveButton(e) {
+            // Prevent default only for mouse events (not for touch events which need to be passive)
+            if (e.type !== 'touchstart') {
+                e.preventDefault();
+            }
+            
             // Calculate a new position for the button
             const maxX = window.innerWidth - this.offsetWidth;
             const maxY = window.innerHeight - this.offsetHeight;
@@ -530,7 +640,7 @@
             this.style.position = 'fixed';
             this.style.left = randomX + 'px';
             this.style.top = randomY + 'px';
-        });
+        }
         
         // Handle the rare case where someone might still click it
         noBtn.addEventListener('click', function() {
@@ -548,23 +658,90 @@
             response.textContent = "मलाई पक्रन कोशिश गर्नुहोस्! 😉";
             response.style.opacity = 1;
             response.style.transform = "translateY(0)";
-            response.style.color = "white";
             response.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.2)";
         });
         
-        // Make 3D effect more dynamic with mouse movement
+        // Handle 3D effect with mouse/touch movement
+        function updateScene(x, y) {
+            const mouseX = x / window.innerWidth - 0.5;
+            const mouseY = y / window.innerHeight - 0.5;
+            
+            // Reduce movement intensity for better performance
+            const movementFactor = isIOS ? 0.3 : 1.0;
+            
+            particlesMesh.rotation.y = mouseX * 0.5 * movementFactor;
+            particlesMesh.rotation.x = mouseY * 0.5 * movementFactor;
+            
+            mandala.rotation.y = mouseX * 3 * movementFactor;
+            mandala.rotation.x = mouseY * 3 * movementFactor;
+            
+            heart.rotation.y = mouseX * 2 * movementFactor + Date.now() * 0.001;
+            heart.rotation.x = mouseY * 2 * movementFactor;
+        }
+        
+        // Handle mouse movement
         document.addEventListener('mousemove', (event) => {
-            const mouseX = event.clientX / window.innerWidth - 0.5;
-            const mouseY = event.clientY / window.innerHeight - 0.5;
+            updateScene(event.clientX, event.clientY);
+        });
+        
+        // Handle touch movement for iOS
+        document.addEventListener('touchmove', (event) => {
+            if (event.touches.length > 0) {
+                updateScene(event.touches[0].clientX, event.touches[0].clientY);
+            }
+        }, { passive: true });
+        
+        // Device orientation for iOS immersive experience
+        if (window.DeviceOrientationEvent && isIOS) {
+            window.addEventListener('deviceorientation', (event) => {
+                // Use device orientation to move scene elements on mobile
+                const tiltX = event.gamma / 30; // Left/right tilt
+                const tiltY = event.beta / 30;  // Front/back tilt
+                
+                if (tiltX && tiltY) {
+                    updateScene(
+                        (tiltX + 0.5) * window.innerWidth,
+                        (tiltY + 0.5) * window.innerHeight
+                    );
+                }
+            }, { passive: true });
+        }
+        
+        // Add initial animation effect to buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
             
-            particlesMesh.rotation.y = mouseX * 0.5;
-            particlesMesh.rotation.x = mouseY * 0.5;
+            setTimeout(() => {
+                yesBtn.style.transform = 'translateY(0) scale(1)';
+                yesBtn.style.opacity = '1';
+            }, 300);
             
-            mandala.rotation.y = mouseX * 3;
-            mandala.rotation.x = mouseY * 3;
-            
-            heart.rotation.y = mouseX * 2 + Date.now() * 0.001;
-            heart.rotation.x = mouseY * 2;
+            setTimeout(() => {
+                noBtn.style.transform = 'translateY(0) scale(1)';
+                noBtn.style.opacity = '1';
+            }, 500);
+        });
+        
+        // Add touch interaction for hearts on click/tap anywhere
+        document.addEventListener('click', (event) => {
+            // Create a small burst of hearts at click location
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.width = '20px';
+                heart.style.height = '20px';
+                heart.style.left = `${event.clientX - 10}px`;
+                heart.style.top = `${event.clientY - 10}px`;
+                heart.style.animation = `float ${5 + i}s linear`;
+                
+                // Remove after animation completes
+                heart.addEventListener('animationend', () => {
+                    heart.remove();
+                });
+                
+                heartsContainer.appendChild(heart);
+            }
         });
     </script>
 </body>
