@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Like to Go on a Date?</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            color: white;
+            background-color: #8C1D40; /* Deep maroon background - a color often used in Nepali textiles */
+        }
+        
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .nepali-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 20px solid transparent;
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFC72C' d='M0,0 L100,0 L100,100 L0,100 L0,0 Z M10,10 L10,90 L90,90 L90,10 L10,10 Z'/%3E%3Cpath fill='%23FFC72C' d='M20,20 L80,20 L80,80 L20,80 L20,20 Z M30,30 L30,70 L70,70 L70,30 L30,30 Z'/%3E%3C/svg%3E") 30 stretch;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .question-container {
+            position: relative;
+            padding: 30px;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            background: rgba(170, 56, 30, 0.85); /* Rust red background - common in Nepali art */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 2px solid #FFC72C; /* Gold border - often used in Nepali designs */
+            max-width: 800px;
+        }
+        
+        .question-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #FFC72C;
+            border-radius: 20px;
+            z-index: -1;
+        }
+        
+        .mandala-accent {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23FFC72C' stroke-width='2' fill='none'/%3E%3Ccircle cx='50' cy='50' r='35' stroke='%23FFC72C' stroke-width='2' fill='none'/%3E%3Ccircle cx='50' cy='50' r='25' stroke='%23FFC72C' stroke-width='2' fill='none'/%3E%3Cpath d='M50,5 L50,95 M5,50 L95,50 M14.6,14.6 L85.4,85.4 M14.6,85.4 L85.4,14.6' stroke='%23FFC72C' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: contain;
+            z-index: 5;
+            opacity: 0.8;
+        }
+        
+        .top-left {
+            top: -25px;
+            left: -25px;
+        }
+        
+        .top-right {
+            top: -25px;
+            right: -25px;
+        }
+        
+        .bottom-left {
+            bottom: -25px;
+            left: -25px;
+        }
+        
+        .bottom-right {
+            bottom: -25px;
+            right: -25px;
+        }
+        
+        .question {
+            font-size: 2.5rem;
+            color: #fff;
+            font-family: 'Arial', cursive;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        .btn {
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M0,0 L20,0 L20,20 L0,20 Z' fill='none' stroke='%23FFC72C' stroke-width='1'/%3E%3Cpath d='M5,5 L15,5 L15,15 L5,15 Z' fill='none' stroke='%23FFC72C' stroke-width='0.5'/%3E%3C/svg%3E");
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-yes {
+            background-color: #C92433; /* Nepali flag red */
+            color: white;
+            border: 2px solid #FFC72C;
+        }
+        
+        .btn-no {
+            background-color: #2874A6; /* Deep blue, often seen in Nepali art */
+            color: white;
+            border: 2px solid #FFC72C;
+        }
+        
+        .response {
+            margin-top: 30px;
+            font-size: 2rem;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            padding: 20px 30px;
+            border-radius: 15px;
+            transform: translateY(20px);
+            max-width: 600px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 2px solid #FFC72C;
+            position: relative;
+        }
+        
+        .response::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 1px solid #FFC72C;
+            border-radius: 18px;
+            z-index: -1;
+        }
+        
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23C92433' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E") no-repeat center center;
+            background-size: contain;
+            animation: float 10s linear infinite;
+            opacity: 0.8;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Flower petals - inspired by Nepali designs */
+        .flower {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFC72C' d='M50,0 C55,25 75,25 100,50 C75,75 55,75 50,100 C45,75 25,75 0,50 C25,25 45,25 50,0 Z'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23C92433'/%3E%3C/svg%3E") no-repeat center center;
+            background-size: contain;
+            animation: floatFlower 15s linear infinite;
+            opacity: 0.4;
+        }
+        
+        @keyframes floatFlower {
+            0% {
+                transform: translateY(1000px) rotate(0deg);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .question {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 12px 40px;
+                font-size: 1.2rem;
+            }
+            
+            .response {
+                font-size: 1.5rem;
+                padding: 15px 20px;
+            }
+            
+            .nepali-border {
+                border-width: 10px;
+            }
+            
+            .mandala-accent {
+                width: 60px;
+                height: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .question {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 10px 30px;
+                font-size: 1rem;
+                margin: 5px;
+            }
+            
+            .response {
+                font-size: 1.3rem;
+                padding: 12px 15px;
+            }
+            
+            .nepali-border {
+                border-width: 8px;
+            }
+            
+            .mandala-accent {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="nepali-border"></div>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <div class="question-container">
+            <div class="mandala-accent top-left"></div>
+            <div class="mandala-accent top-right"></div>
+            <div class="mandala-accent bottom-left"></div>
+            <div class="mandala-accent bottom-right"></div>
+            <h1 class="question">I like you. Would you like to go on a date with me?</h1>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn btn-yes" id="yes-btn">YES</button>
+            <button class="btn btn-no" id="no-btn">NO</button>
+        </div>
+        
+        <div class="response" id="response"></div>
+    </div>
+
+    <script>
+        // Set up Three.js scene
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: true
+        });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x8C1D40, 0.3); // Nepali maroon with transparency
+        
+        // Create particles representing stars in the night sky
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 3000;
+        
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.03,
+            color: 0xFFC72C, // Nepali gold for particles
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+        
+        // Add Mandala geometry - a symbol often found in Nepali art
+        const mandalaGeometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
+        const mandalaMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xFFC72C,
+            wireframe: true
+        });
+        const mandala = new THREE.Mesh(mandalaGeometry, mandalaMaterial);
+        scene.add(mandala);
+        
+        // Add heart shape as center piece
+        const heartShape = new THREE.Shape();
+        
+        // Create heart path
+        const x = 0, y = 0;
+        heartShape.moveTo(x, y + 0.25);
+        heartShape.bezierCurveTo(x, y + 0.25, x - 0.5, y, x - 0.5, y - 0.25);
+        heartShape.bezierCurveTo(x - 0.5, y - 0.5, x, y - 0.8, x, y - 0.8);
+        heartShape.bezierCurveTo(x, y - 0.8, x + 0.5, y - 0.5, x + 0.5, y - 0.25);
+        heartShape.bezierCurveTo(x + 0.5, y, x, y + 0.25, x, y + 0.25);
+        
+        const heartGeometry = new THREE.ExtrudeGeometry(heartShape, {
+            depth: 0.2,
+            bevelEnabled: true,
+            bevelSegments: 2,
+            steps: 2,
+            bevelSize: 0.1,
+            bevelThickness: 0.1
+        });
+        
+        const heartMaterial = new THREE.MeshBasicMaterial({ color: 0xC92433 }); // Nepali red
+        const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+        heart.scale.set(0.8, 0.8, 0.8);
+        heart.position.set(0, 0, -1);
+        scene.add(heart);
+        
+        // Position camera
+        camera.position.z = 5;
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            particlesMesh.rotation.x += 0.0003;
+            particlesMesh.rotation.y += 0.0003;
+            
+            mandala.rotation.x += 0.003;
+            mandala.rotation.y += 0.005;
+            
+            heart.rotation.y += 0.01;
+            heart.rotation.z += 0.005;
+            
+            // Make the heart pulse
+            const pulseFactor = Math.sin(Date.now() * 0.003) * 0.1 + 1;
+            heart.scale.set(0.8 * pulseFactor, 0.8 * pulseFactor, 0.8 * pulseFactor);
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Create floating hearts and flowers background (inspired by Nepali designs)
+        const heartsContainer = document.getElementById('hearts');
+        
+        for (let i = 0; i < 20; i++) {
+            createHeart();
+        }
+        
+        for (let i = 0; i < 15; i++) {
+            createFlower();
+        }
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            
+            // Random size
+            const size = Math.random() * 30 + 10;
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            
+            // Random position
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight + window.innerHeight;
+            heart.style.left = `${startX}px`;
+            heart.style.top = `${startY}px`;
+            
+            // Random animation duration
+            const duration = Math.random() * 15 + 5;
+            heart.style.animation = `float ${duration}s linear infinite`;
+            
+            // Random animation delay
+            heart.style.animationDelay = `-${Math.random() * duration}s`;
+            
+            // Random opacity
+            heart.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            heartsContainer.appendChild(heart);
+        }
+        
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            
+            // Random size
+            const size = Math.random() * 40 + 20;
+            flower.style.width = `${size}px`;
+            flower.style.height = `${size}px`;
+            
+            // Random position
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + Math.random() * 500;
+            flower.style.left = `${startX}px`;
+            flower.style.top = `${startY}px`;
+            
+            // Random animation duration
+            const duration = Math.random() * 20 + 10;
+            flower.style.animation = `floatFlower ${duration}s linear infinite`;
+            
+            // Random animation delay
+            flower.style.animationDelay = `-${Math.random() * duration}s`;
+            
+            // Random opacity
+            flower.style.opacity = Math.random() * 0.5 + 0.2;
+            
+            heartsContainer.appendChild(flower);
+        }
+        
+        // Handle button clicks
+        document.getElementById('yes-btn').addEventListener('click', function() {
+            const response = document.getElementById('response');
+            response.textContent = "That truly makes me happy ❤️";
+            response.style.opacity = 1;
+            response.style.transform = "translateY(0)";
+            response.style.color = "white";
+            response.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.2)";
+            
+            // Create celebration hearts and flowers
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => createHeart(), i * 100);
+            }
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => createFlower(), i * 150);
+            }
+        });
+        
+        // Make the No button impossible to click by moving it away from the cursor
+        const noBtn = document.getElementById('no-btn');
+        
+        noBtn.addEventListener('mouseover', function(e) {
+            // Calculate a new position for the button
+            const maxX = window.innerWidth - this.offsetWidth;
+            const maxY = window.innerHeight - this.offsetHeight;
+            
+            // Get a random position within the safe bounds of the screen
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            // Set the new position
+            this.style.position = 'fixed';
+            this.style.left = randomX + 'px';
+            this.style.top = randomY + 'px';
+        });
+        
+        // Handle the rare case where someone might still click it
+        noBtn.addEventListener('click', function() {
+            // Move the button first
+            const maxX = window.innerWidth - this.offsetWidth;
+            const maxY = window.innerHeight - this.offsetHeight;
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            this.style.position = 'fixed';
+            this.style.left = randomX + 'px';
+            this.style.top = randomY + 'px';
+            
+            // Then show a playful message
+            const response = document.getElementById('response');
+            response.textContent = "मलाई पक्रन कोशिश गर्नुहोस्! 😉";
+            response.style.opacity = 1;
+            response.style.transform = "translateY(0)";
+            response.style.color = "white";
+            response.style.boxShadow = "0 5px 15px rgba(0, 0, 0, 0.2)";
+        });
+        
+        // Make 3D effect more dynamic with mouse movement
+        document.addEventListener('mousemove', (event) => {
+            const mouseX = event.clientX / window.innerWidth - 0.5;
+            const mouseY = event.clientY / window.innerHeight - 0.5;
+            
+            particlesMesh.rotation.y = mouseX * 0.5;
+            particlesMesh.rotation.x = mouseY * 0.5;
+            
+            mandala.rotation.y = mouseX * 3;
+            mandala.rotation.x = mouseY * 3;
+            
+            heart.rotation.y = mouseX * 2 + Date.now() * 0.001;
+            heart.rotation.x = mouseY * 2;
+        });
+    </script>
+</body>
+</html>
